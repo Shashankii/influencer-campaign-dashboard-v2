@@ -26,16 +26,31 @@ tracking_file = st.sidebar.file_uploader("Upload Tracking Data", type=["csv"])
 payouts_file = st.sidebar.file_uploader("Upload Payouts Data", type=["csv"])
 
 # --- Load Data ---
-if influencer_file and post_file and tracking_file and payouts_file:
-    influencers = pd.read_csv(influencer_file)
-    posts = pd.read_csv(post_file)
-    tracking = pd.read_csv(tracking_file)
-    payouts = pd.read_csv(payouts_file)
-else:
-    influencers = default_influencers
-    posts = pd.read_csv("posts.csv")
-    tracking = pd.read_csv("tracking_data.csv")
-    payouts = pd.read_csv("payouts.csv")
+# --- Load Data ---
+try:
+    if influencer_file:
+        influencers = pd.read_csv(influencer_file)
+    else:
+        influencers = pd.read_csv("data/influencers.csv")
+
+    if post_file:
+        posts = pd.read_csv(post_file)
+    else:
+        posts = pd.read_csv("data/posts.csv")
+
+    if tracking_file:
+        tracking = pd.read_csv(tracking_file)
+    else:
+        tracking = pd.read_csv("data/tracking_data.csv")
+
+    if payouts_file:
+        payouts = pd.read_csv(payouts_file)
+    else:
+        payouts = pd.read_csv("data/payouts.csv")
+except Exception as e:
+    st.error(f"❌ Error loading data: {e}")
+    st.stop()
+
 
 # --- Apply Filter ---
 if selected_platform != "All":
