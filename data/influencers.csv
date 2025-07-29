@@ -1,4 +1,4 @@
-id,name,category,gender,follower_count,platform
+influencer_id,name,category,gender,follower_count,platform
 1,Aman,Fitness,Male,100000,Instagram
 2,Riya,Health,Female,80000,YouTube
 3,John,Nutrition,Male,120000,Instagram
