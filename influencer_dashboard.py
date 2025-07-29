@@ -1,85 +1,59 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 
-# Set wide layout
-st.set_page_config(page_title="Influencer Campaign Dashboard", layout="wide")
+# Page configuration
+st.set_page_config(page_title="📊 Influencer Campaign Dashboard", layout="wide")
 
-# Title
 st.title("📊 Influencer Campaign Dashboard")
 
-# --- Sidebar Filters ---
+# Function to load default CSV from GitHub raw link
+@st.cache_data
+def load_csv_from_url(url):
+    try:
+        return pd.read_csv(url)
+    except Exception as e:
+        st.warning(f"⚠️ Failed to load data from: {url}")
+        return pd.DataFrame()
+
+# Default GitHub raw CSV links
+default_influencers_url = "https://raw.githubusercontent.com/Shashankii/influencer-campaign-dashboard-v2/main/influencers.csv"
+default_posts_url = "https://raw.githubusercontent.com/Shashankii/influencer-campaign-dashboard-v2/main/posts.csv"
+default_tracking_url = "https://raw.githubusercontent.com/Shashankii/influencer-campaign-dashboard-v2/main/tracking_data.csv"
+default_payouts_url = "https://raw.githubusercontent.com/Shashankii/influencer-campaign-dashboard-v2/main/payouts.csv"
+
+# Sidebar
 st.sidebar.header("🔍 Filters")
+st.sidebar.subheader("📥 Upload Campaign Data")
 
-# Load default influencers CSV to get platform options
-try:
-    default_influencers = pd.read_csv("influencers.csv")
-    platforms = default_influencers["platform"].unique().tolist()
-except Exception as e:
-    st.sidebar.error("⚠️ Failed to load default influencers.csv")
-    platforms = []
+# Uploaders
+uploaded_influencers = st.sidebar.file_uploader("Upload Influencers Data", type="csv")
+uploaded_posts = st.sidebar.file_uploader("Upload Posts Data", type="csv")
+uploaded_tracking = st.sidebar.file_uploader("Upload Tracking Data", type="csv")
+uploaded_payouts = st.sidebar.file_uploader("Upload Payouts Data", type="csv")
 
-selected_platform = st.sidebar.selectbox("Select Platform", ["All"] + platforms)
+# Load data: uploaded or default
+influencers_df = pd.read_csv(uploaded_influencers) if uploaded_influencers else load_csv_from_url(default_influencers_url)
+posts_df = pd.read_csv(uploaded_posts) if uploaded_posts else load_csv_from_url(default_posts_url)
+tracking_df = pd.read_csv(uploaded_tracking) if uploaded_tracking else load_csv_from_url(default_tracking_url)
+payouts_df = pd.read_csv(uploaded_payouts) if uploaded_payouts else load_csv_from_url(default_payouts_url)
 
-st.sidebar.markdown("---")
+# Platform filter
+if not influencers_df.empty and "platform" in influencers_df.columns:
+    platforms = influencers_df["platform"].dropna().unique().tolist()
+    selected_platform = st.sidebar.selectbox("Select Platform", ["All"] + platforms)
 
-# --- Sidebar Uploads ---
-st.sidebar.header("📤 Upload Campaign Data")
-influencer_file = st.sidebar.file_uploader("Upload Influencers Data", type=["csv"])
-post_file = st.sidebar.file_uploader("Upload Posts Data", type=["csv"])
-tracking_file = st.sidebar.file_uploader("Upload Tracking Data", type=["csv"])
-payouts_file = st.sidebar.file_uploader("Upload Payouts Data", type=["csv"])
+    if selected_platform != "All":
+        influencers_df = influencers_df[influencers_df["platform"] == selected_platform]
 
-# --- Load Data ---
-try:
-    if influencer_file and post_file and tracking_file and payouts_file:
-        influencers = pd.read_csv(influencer_file)
-        posts = pd.read_csv(post_file)
-        tracking = pd.read_csv(tracking_file)
-        payouts = pd.read_csv(payouts_file)
-    else:
-        influencers = pd.read_csv("influencers.csv")
-        posts = pd.read_csv("posts.csv")
-        tracking = pd.read_csv("tracking_data.csv")
-        payouts = pd.read_csv("payouts.csv")
-except Exception as e:
-    st.error(f"❌ Error loading data: {e}")
-    st.stop()
+# Show data
+st.subheader("👤 Influencers Data")
+st.dataframe(influencers_df)
 
-# --- Apply Filter ---
-if selected_platform != "All":
-    influencers = influencers[influencers["platform"] == selected_platform]
+st.subheader("📢 Posts Data")
+st.dataframe(posts_df)
 
-# --- Merge Data ---
-try:
-    merged = tracking.merge(influencers, left_on="influencer_id", right_on="id")
-    merged = merged.merge(payouts, on="influencer_id")
+st.subheader("📦 Tracking Data")
+st.dataframe(tracking_df)
 
-    # ROAS Calculations
-    merged["ROAS"] = merged["revenue"] / merged["total_payout"]
-    merged["baseline_revenue"] = merged["revenue"] * 0.6
-    merged["incremental_revenue"] = merged["revenue"] - merged["baseline_revenue"]
-    merged["incremental_ROAS"] = merged["incremental_revenue"] / merged["total_payout"]
-except Exception as e:
-    st.error(f"❌ Error merging or calculating data: {e}")
-    st.stop()
-
-# --- Campaign Summary Table ---
-st.subheader("📈 Campaign Summary")
-summary = merged.groupby("platform").agg({
-    "revenue": "sum",
-    "total_payout": "sum",
-    "ROAS": "mean",
-    "incremental_ROAS": "mean"
-}).reset_index()
-st.dataframe(summary, use_container_width=True)
-
-# --- Top Influencers ---
-st.subheader("🏆 Top Influencers by Engagement")
-posts["engagement"] = posts["likes"] + posts["comments"]
-top_posts = posts.sort_values("engagement", ascending=False).head(5)
-st.dataframe(top_posts, use_container_width=True)
-
-# --- Download Button ---
-st.subheader("📤 Export Data")
-st.download_button("Download Top_
+st.subheader("💰 Payouts Data")
+st.dataframe(payouts_df)
