@@ -6,6 +6,8 @@ This interactive dashboard simulates and visualizes influencer marketing perform
 
 🔗 **[👉 Click here to try the live app](https://influencer-campaign-dashboard-v2-fhsubfxmnqfz26qqww63sy.streamlit.app/)**  
 
+----
+
 📁 **Tool**: Built using Python, Streamlit, and Plotly  
 🧪 **Data Modeling**: 4 simulated datasets created in CSV
 
@@ -114,8 +116,6 @@ Located in `/data/` folder:
 
 ---
 
-
----
 
 ## 🧠 Final Thoughts
 
