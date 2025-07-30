@@ -1,5 +1,10 @@
 # 💼 HealthKart Influencer Campaign ROI Dashboard
 
+## 🚀 Live Demo
+
+👉 **[Click here to try the live app](https://influencer-campaign-dashboard-v2-fhsubfxmnqfz26qqww63sy.streamlit.app/)**
+
+
 This dashboard analyzes influencer campaign performance for HealthKart across platforms like Instagram, YouTube, and Twitter. It calculates key metrics like ROAS (Return on Ad Spend), influencer insights, and payout tracking.
 
 ---
