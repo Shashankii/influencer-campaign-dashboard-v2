@@ -4,7 +4,7 @@
 
 This interactive dashboard simulates and visualizes influencer marketing performance for **HealthKart** across platforms like Instagram, YouTube, and Twitter. It enables stakeholders to evaluate influencer efficiency, compare campaign ROAS, and track payouts — all using simulated data modeled around real-world influencer campaign logic.
 
-🔗 **[Live App](https://influencer-campaign-dashboard-v2-fhsubfxmnqfz26qqww63sy.streamlit.app/)**  
+🔗 **[👉 Click here to try the live app](https://influencer-campaign-dashboard-v2-fhsubfxmnqfz26qqww63sy.streamlit.app/)**  
 
 📁 **Tool**: Built using Python, Streamlit, and Plotly  
 🧪 **Data Modeling**: 4 simulated datasets created in CSV
